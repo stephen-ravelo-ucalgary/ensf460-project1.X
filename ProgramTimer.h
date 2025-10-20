@@ -17,5 +17,6 @@ void resetTimer();
 
 void displaySET();
 void displayCNT();
+void displayFIN();
 
 #endif

@@ -26,6 +26,8 @@ void incrementMinutes(uint16_t m) {
 }
 
 void startTimer() {
+    // TODO: add LED blinking
+    
     while (minutes > 0 || seconds > 0) {
         if (seconds == 0) {
             minutes -= 1;
