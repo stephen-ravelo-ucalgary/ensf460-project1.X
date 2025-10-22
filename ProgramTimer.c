@@ -7,6 +7,10 @@ uint16_t getSeconds() {
     return seconds;
 }
 
+void setSeconds(uint16_t s) {
+    seconds = s;
+}
+
 void incrementSeconds(uint16_t s) {
     seconds += s;
     if (seconds > 59) {
@@ -14,8 +18,19 @@ void incrementSeconds(uint16_t s) {
     }
 }
 
+void decrementSeconds(uint16_t s) {
+    if(seconds == 0) {
+        seconds += 60;
+    }
+    seconds -= s;
+}
+
 uint16_t getMinutes() {
     return minutes;
+}
+
+void setMinutes(uint16_t m) {
+    minutes = m;
 }
 
 void incrementMinutes(uint16_t m) {
@@ -23,6 +38,13 @@ void incrementMinutes(uint16_t m) {
     if (minutes > 59) {
         minutes -= 60;
     }
+}
+
+void decrementMinutes(uint16_t m) {
+    if(minutes == 0) {
+        minutes += 60;
+    }
+    minutes -= m;
 }
 
 void startTimer() {
@@ -54,4 +76,9 @@ void displayCNT() {
     Disp2String("m : ");
     Disp2Dec(seconds);
     Disp2String("s\r");
+}
+
+void displayGroupInfo() {
+    Disp2String("\033[2J\033[H");
+    Disp2String("2025 ENSF 460 L02 - Group 01\r");
 }
