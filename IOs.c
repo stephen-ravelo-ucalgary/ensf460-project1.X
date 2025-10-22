@@ -60,13 +60,42 @@ void IOcheck() {
     }
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
-            if (count == 5) { // change count goal as needed
-                // TODO: reset timer
-                
+            if (count == 5) {
+                // reset timer
+                setSeconds(0);
+                setMinutes(0);
+                displaySET();
             }
-            delay_ms(50); // change delay as needed
+            delay_ms(50);
             count++;
         }
-        startTimer();
+        if(count < 5) {
+            startTimer();
+        }
+        count = 0;
+    }
+    else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+        while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+            decrementSeconds(1);
+            displaySET();
+            delay_ms(500);
+        }
+    }
+    else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
+        while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
+            decrementMinutes(1);
+            displaySET();
+            delay_ms(500);
+        }
+    }
+    else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
+        uint16_t groupInfoDisplayed = 1;
+        while(PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
+            if(groupInfoDisplayed == 1) {
+                displayGroupInfo();
+                groupInfoDisplayed = 0;
+            }
+        }
+        displaySET();
     }
 }
