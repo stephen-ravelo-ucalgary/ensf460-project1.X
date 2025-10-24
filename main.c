@@ -114,7 +114,7 @@ void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void)
     
     // Do not trigger CN_event if no PBs are pressed
     if(PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1){
-//        Disp2String("\033[2J\033[HNothing Pressed...\r");
+    //Disp2String("\033[2J\033[HNothing Pressed...\r");
     }else{
         CN_event = 1;
     }

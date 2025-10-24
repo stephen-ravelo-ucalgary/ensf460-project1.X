@@ -17,9 +17,9 @@ void delay_ms(uint16_t time_ms) {
     TMR2 = 0;
     
     T2CONbits.TON = 1;
-    
-    Idle();                 // wait here until interrupt 
-                            // TODO: needs protection againts CN interrupts
-    
+    //while(T2CONbits.TON = 1){
+        Idle();                 // wait here until interrupt 
+    //}                   
+    // TODO: needs protection againts CN interrupts
     return;
 }

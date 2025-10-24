@@ -3,6 +3,8 @@
 uint16_t seconds = 0;
 uint16_t minutes = 0;
 
+char paused = 0;
+
 uint16_t getSeconds() {
     return seconds;
 }
@@ -49,16 +51,29 @@ void decrementMinutes(uint16_t m) {
 
 void startTimer() {
     // TODO: add LED blinking
-    
-    while (minutes > 0 || seconds > 0) {
+    while ((minutes > 0 || seconds > 0) && paused == 0) {
         if (seconds == 0) {
             minutes -= 1;
             seconds = 59;
         } else {
             seconds -= 1;
         }
+        
+        _LATB9 ^= 1;
         displayCNT();
         delay_ms(1000);
+    }
+    _LATB9 ^= 1;
+}
+
+void pauseTimer() {
+    paused = 1;
+    delay_ms(100); ///avoid to detect the same press
+    while (1) {
+        if(PORTAbits.RA4 == 0); // wait for next press
+            delay_ms(100);      // debounce
+            paused = 0;
+            break;
     }
 }
 
@@ -82,3 +97,4 @@ void displayGroupInfo() {
     Disp2String("\033[2J\033[H");
     Disp2String("2025 ENSF 460 L02 - Group 01\r");
 }
+

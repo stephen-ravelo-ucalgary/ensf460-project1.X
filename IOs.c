@@ -60,7 +60,7 @@ void IOcheck() {
     }
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
-            if (count == 5) {
+            if (count == 10) {
                 // reset timer
                 setSeconds(0);
                 setMinutes(0);
@@ -69,10 +69,20 @@ void IOcheck() {
             delay_ms(50);
             count++;
         }
-        if(count < 5) {
-            startTimer();
+        if(count < 10) {
+            startTimer();   
+            Disp2String("\033[2J\033[H");
+            Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
+            //LED 1 on
+            _LATB9 = 1;
+            while(1){
+                //LED 2 blinking
+                _LATA6 ^= 1;
+                delay_ms(300);
+            }      
         }
         count = 0;
+        
     }
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
@@ -97,5 +107,23 @@ void IOcheck() {
             }
         }
         displaySET();
+    }
+    else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+        //long press - reset during the counting
+        while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+            if (count == 60) {
+                // reset timer
+                setSeconds(0);
+                setMinutes(0);
+                displaySET();
+            }
+            delay_ms(50);
+            count++;
+        }
+        //short press - pause timer
+        if(count < 60) {
+            pauseTimer();
+        }
+        count = 0;
     }
 }
