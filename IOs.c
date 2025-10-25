@@ -1,8 +1,6 @@
 #include "IOs.h"
-#include "UART2.h"
-#include "ProgramTimer.h"
 
-uint16_t time_elapsed_ms;
+uint16_t CLRF = 0;
 
 // Initialize peripheral IO
 void IOinit() {
@@ -60,17 +58,20 @@ void IOcheck() {
     }
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
-            if (count == 5) {
-                // reset timer
-                setSeconds(0);
-                setMinutes(0);
+            if (count == 60) {  // reset timer if PB1 and PB2 held for 500 ms
+                resetTimer();
                 displaySET();
             }
             delay_ms(50);
             count++;
         }
-        if(count < 5) {
+        if(count < 60) {
             startTimer();
+            if (!CLRF) {        // if timer has not been cleared while running
+                                // trigger alarm at end of timer
+                alarm();
+            }
+            CLRF = 0;
         }
         count = 0;
     }
@@ -97,5 +98,26 @@ void IOcheck() {
             }
         }
         displaySET();
+    }
+}
+
+void IOcheckRunning() {
+    int count = 0;
+    if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+        while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+            if (count == 60) {  // reset timer after PB3 is held for 3 seconds
+                                // while timer is running
+                resetTimer();
+                displayCLR();
+                CLRF = 1;
+            }
+            delay_ms(50);
+            count++;
+
+        }
+        if (count < 60) {   // otherwise, pause the timer
+            pauseTimer();
+        }
+        count = 0;
     }
 }

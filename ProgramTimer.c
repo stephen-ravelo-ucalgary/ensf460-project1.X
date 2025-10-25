@@ -3,6 +3,8 @@
 uint16_t seconds = 0;
 uint16_t minutes = 0;
 
+uint8_t paused = 0;
+
 uint16_t getSeconds() {
     return seconds;
 }
@@ -48,18 +50,53 @@ void decrementMinutes(uint16_t m) {
 }
 
 void startTimer() {
-    // TODO: add LED blinking
-    
-    while (minutes > 0 || seconds > 0) {
+    while ((minutes > 0 || seconds > 0) && paused == 0) {
         if (seconds == 0) {
             minutes -= 1;
             seconds = 59;
         } else {
             seconds -= 1;
         }
+        _LATB9 ^= 1;
         displayCNT();
-        delay_ms(1000);
+        for (int i=0; i<10; i++) {
+            IOcheckRunning();
+            delay_ms(100);
+        }
     }
+    _LATB9 = 0;
+}
+
+void pauseTimer() {
+    paused = 1;
+    delay_ms(100);                  // avoid detecting the same press
+    while (1) {
+        Idle();
+        if (PORTAbits.RA4 == 0) {   // wait for next press
+            delay_ms(200);          // debouncing
+            paused = 0;
+            break;
+        }
+    }
+}
+
+void resetTimer() {
+    seconds = 0;
+    minutes = 0;
+}
+
+void alarm() {
+    displayFIN();
+    _LATB9 = 1;
+    
+    //  Show alarm until any button is pressed
+    while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
+        // LED 2 blinking
+        _LATA6 ^= 1;
+        delay_ms(300);
+    }
+    _LATB9 = 0;
+    _LATA6 = 0;
 }
 
 void displaySET() {
@@ -78,7 +115,20 @@ void displayCNT() {
     Disp2String("s\r");
 }
 
+void displayCLR() {
+    Disp2String("\033[2J\033[HCLR ");
+    Disp2Dec(minutes);
+    Disp2String("m : ");
+    Disp2Dec(seconds);
+    Disp2String("s\r");
+}
+
 void displayGroupInfo() {
     Disp2String("\033[2J\033[H");
     Disp2String("2025 ENSF 460 L02 - Group 01\r");
+}
+
+void displayFIN() {
+    Disp2String("\033[2J\033[H\r");
+    Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
 }
