@@ -100,24 +100,6 @@ void IOcheck() {
         }
         displaySET();
     }
-    else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
-        //long press - reset during the counting
-        while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
-            if (count == 60) {
-                // reset timer
-                setSeconds(0);
-                setMinutes(0);
-                displaySET();
-            }
-            delay_ms(50);
-            count++;
-        }
-        //short press - pause timer
-        if(count < 60) {
-            pauseTimer();
-        }
-        count = 0;
-    }
 }
 
 void IOcheckRunning() {
