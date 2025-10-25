@@ -58,7 +58,7 @@
 #include "ProgramTimer.h"
 
 uint16_t CN_event;
-
+static char RA4_prev = 1; // save previous state
 /**
  * You might find it useful to add your own #defines to improve readability here
  */
@@ -111,11 +111,17 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void)
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void)
 {
     IFS1bits.CNIF = 0; // Clear CN interrupt flag
-    
+    char RA4_curr = PORTAbits.RA4;
     // Do not trigger CN_event if no PBs are pressed
     if(PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1){
-    //Disp2String("\033[2J\033[HNothing Pressed...\r");
+        //Disp2String("\033[2J\033[HNothing Pressed...\r");
+    }
+    // Detect Pause PB3 
+    else if(RA4_curr == 0 && RA4_prev == 1) {
+        pauseTimer();  // alternate paused flag
     }else{
         CN_event = 1;
     }
+
+    RA4_prev = RA4_curr; // update button state
 }

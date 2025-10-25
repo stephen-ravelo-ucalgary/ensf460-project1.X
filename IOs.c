@@ -71,8 +71,6 @@ void IOcheck() {
         }
         if(count < 10) {
             startTimer();   
-            Disp2String("\033[2J\033[H");
-            Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
             //LED 1 on
             _LATB9 = 1;
             while(1){
@@ -111,8 +109,12 @@ void IOcheck() {
     else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
         //long press - reset during the counting
         while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
+            Disp2String("\033[2J\033[H");
+            Disp2String("\033[2J\033[HPB3 pressing");
+            delay_ms(1000);
             if (count == 60) {
                 // reset timer
+                pauseTimer();
                 setSeconds(0);
                 setMinutes(0);
                 displaySET();
@@ -122,6 +124,9 @@ void IOcheck() {
         }
         //short press - pause timer
         if(count < 60) {
+            Disp2String("\033[2J\033[H");
+            Disp2String("\033[2J\033[HPB3 pressed");
+            delay_ms(1000);
             pauseTimer();
         }
         count = 0;
