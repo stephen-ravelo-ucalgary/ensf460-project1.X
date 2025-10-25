@@ -9,6 +9,7 @@
 #define	TIMER_H
 
 #include <xc.h>
+#include "IOs.h"
 
 void timerInit();
 void delay_ms();

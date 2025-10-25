@@ -18,11 +18,12 @@ void decrementMinutes(uint16_t minutes);
 void startTimer();
 void pauseTimer();
 void resetTimer();
+void alarm();
 
 void displaySET();
 void displayCNT();
 void displayFIN();
-
+void displayCLR();
 void displayGroupInfo();
 
 #endif
