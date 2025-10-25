@@ -1,14 +1,14 @@
 # ensf460-project1.X
 
 ### Key changes since Alexa's last commit
-
+---
 #### IOs.c
 ##### General
 - added uint16_t CLRF (clear flag) as a variable to prevent alarm going off after resetting the timer while it is running
 ##### void IOcheck()
 - set reset timer condition to 3 seconds, same as while the timer is running
 - check for no CLRF before running alarm()
-
+---
 #### ProgramTimer.c
 ##### General
 - paused changed to uint8_t
