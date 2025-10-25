@@ -61,7 +61,7 @@ void startTimer() {
         displayCNT();
         for (int i=0; i<10; i++) {
             IOcheckRunning();
-            delay_ms(100);
+            delay_ms(91);
         }
     }
     _LATB9 = 0;
