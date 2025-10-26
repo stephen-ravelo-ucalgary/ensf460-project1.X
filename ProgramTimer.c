@@ -7,6 +7,7 @@
  */
 
 #include "ProgramTimer.h"
+#include "IOs.h"
 
 uint16_t seconds = 0;
 uint16_t minutes = 0;
@@ -58,50 +59,50 @@ void decrementMinutes(uint16_t m) {
 
 void startTimer() {
     // Variables to control intervals
-    const unsigned int INTERVAL_MS = 50;           // Short interval to check the flag
-    const unsigned int TICKS_PER_SECOND = 1000 / INTERVAL_MS; // 20 ticks per second
+    const unsigned int INTERVAL_MS = 50;           // Short interval to check the button
+    const unsigned int TICKS_PER_SECOND = 1000 / INTERVAL_MS; // Number of intervals in 1 second
+    const unsigned int LONG_PRESS_TICKS = 3000 / INTERVAL_MS; // 3 seconds in ticks
+
+    unsigned int press_time = 0; // Counter to track button press duration
 
     while (minutes > 0 || seconds > 0) {
         int ticks = 0;
-        // Each "second" is divided into TICKS_PER_SECOND intervals
+
         while (ticks < TICKS_PER_SECOND) {
+            // PAUSE / LONG PRESS DETECTION
             if (paused) {
-                // If paused, wait for the interval and keep checking the flag
+                if (PORTAbits.RA4 == 0) {   // Button is pressed while paused
+                    press_time++;
+                    if (press_time >= LONG_PRESS_TICKS) {
+                        // Long press: reset timer
+                        paused = 1; // Keep paused
+                        resetTimer();
+                        displayCLR();
+                        CLRF = 1;
+                        return;     // Exit timer
+                    }
+                } else {
+                    press_time = 0; // Button released before long press threshold
+                }
                 delay_ms(INTERVAL_MS);
-                continue;
+                continue; // Stay paused
             }
-            delay_ms(INTERVAL_MS); // wait for the interval
+            delay_ms(INTERVAL_MS);
             ticks++;
         }
-        // After a full second without being paused
+        // Update timer every second if not paused
         if (!paused) {
             if (seconds == 0) {
-                minutes--;
-                seconds = 59;
+                if (minutes > 0) minutes--;
+                seconds = (minutes > 0) ? 59 : 0;
             } else {
                 seconds--;
             }
-            _LATB9 ^= 1; // Toggle LED and display time
+            _LATB9 ^= 1; // Toggle LED each second
             displayCNT();
         }
     }
-    // Turn off LED when countdown ends
-    _LATB9 = 0;
-}
-
-// pause timer at its current value
-// resume after PB3 is pressed again
-void pauseTimer() {
-    paused = 1;
-    delay_ms(100);                  // avoid detecting the same press
-    while (1) {
-        Idle();
-        if (PORTAbits.RA4 == 0) {   // wait for next press
-            delay_ms(200);          // debouncing
-            paused = 0;
-            break;
-        }
-    }
+    _LATB9 = 0; // Turn off LED when countdown ends
 }
 
 void resetTimer() {

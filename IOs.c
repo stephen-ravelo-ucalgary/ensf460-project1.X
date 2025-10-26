@@ -115,29 +115,3 @@ void IOcheck() {
         displaySET();
     }
 }
-
-// IO check for while the timer is running
-void IOcheckRunning() {
-    uint16_t count = 0;
-    
-    // PB3 pressed: 
-    // Short press (< 3 seconds): pause timer
-    // Long press (> 3 seconds): reset timer and display clear message
-    if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
-        while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
-            if (count == 60) {  // reset timer after PB3 is held for 3 seconds
-                                // while timer is running
-                resetTimer();
-                displayCLR();
-                CLRF = 1;
-            }
-            delay_ms(50);
-            count++;
-
-        }
-        if (count < 60) {   // otherwise, pause the timer
-            pauseTimer();
-        }
-        count = 0;
-    }
-}

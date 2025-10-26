@@ -14,6 +14,7 @@
 #include "UART2.h"
 #include "ProgramTimer.h"
 
+extern uint16_t CLRF;
 void IOinit();
 void IOcheck();
 
