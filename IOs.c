@@ -64,7 +64,7 @@ void IOcheck() {
         }
     }
     // PB1 and PB2 pressed:
-    // Short press (< 3 seconds): start timer
+    // Short press (< 3 seconds): start timer (must not be 00:00)
     // Long press (> 3 seconds): reset timer and display set message
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
@@ -75,7 +75,9 @@ void IOcheck() {
             delay_ms(50);
             count++;
         }
-        if(count < 60) {
+        
+        // start timer if held for 3 seconds and seconds or minutes > 0
+        if(count < 60 && (getSeconds() || getMinutes())) {
             startTimer();
             if (!CLRF) {        // if timer has not been cleared while running
                                 // trigger alarm at end of timer
@@ -84,7 +86,6 @@ void IOcheck() {
             CLRF = 0;
         }
         count = 0;
-        
     }
     // PB1 and PB3 pressed: decrement seconds by 1 and display set message
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {

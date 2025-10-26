@@ -92,14 +92,14 @@ int main(void)
     // Waits for button press and executes logic after 200ms
     while(1) 
     {
-        Idle();         // Wait for interrupt
-        delay_ms(200);  // Debouncing
+        Idle();             // Wait for interrupt
+        delay_ms(200);      // Debouncing
         if(CN_event == 1) 
         {
             CN_event = 0;
-            IOcheck();  // Execute IO logic
+            IOcheck();      // Execute IO logic
             
-            _LATB9 = 0; // Turn off LED
+            _LATB9 = 0;     // Turn off LED
         }
     }
     

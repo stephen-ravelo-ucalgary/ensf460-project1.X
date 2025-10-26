@@ -107,11 +107,11 @@ void alarm() {
     while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
         // LED 2 blinking
         _LATA6 ^= 1;
-        delay_ms(300);
+        delay_ms(250);
     }
     _LATB9 = 0;
     _LATA6 = 0;
-    displaySET();
+    Disp2String("\033[2J\033[H\r");
 }
 
 void displaySET() {
