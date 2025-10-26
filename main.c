@@ -98,7 +98,7 @@ int main(void)
         {
             CN_event = 0;
             IOcheck();      // Execute IO logic
-            
+
             _LATB9 = 0;     // Turn off LED
         }
     }

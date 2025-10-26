@@ -113,11 +113,13 @@ void resetTimer() {
 // Displays finished message, turns LED1 on, and toggles LED2 every 300 ms
 // until a button is pressed
 void alarm() {
+    CN_event = 0;
+    
     displayFIN();
     _LATB9 = 1;
     
     //  Show alarm until any button is pressed
-    while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
+    while (CN_event == 0) {
         // LED 2 blinking
         _LATA6 ^= 1;
         delay_ms(250);

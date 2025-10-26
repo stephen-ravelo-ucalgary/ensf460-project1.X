@@ -14,6 +14,8 @@
 #include "UART2.h"
 
 extern uint8_t paused;
+extern uint16_t CN_event;
+
 uint16_t getSeconds();
 void setSeconds(uint16_t seconds);
 void incrementSeconds(uint16_t seconds);
