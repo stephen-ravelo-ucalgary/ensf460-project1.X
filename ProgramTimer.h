@@ -13,6 +13,7 @@
 #include "timer.h"
 #include "UART2.h"
 
+extern uint8_t paused;
 uint16_t getSeconds();
 void setSeconds(uint16_t seconds);
 void incrementSeconds(uint16_t seconds);

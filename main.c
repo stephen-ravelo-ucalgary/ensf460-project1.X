@@ -1,8 +1,9 @@
 /*
- * File:   main.c
- * Author: UPDATE THIS WITH YOUR GROUP MEMBER NAMES OR POTENTIALLY LOSE POINTS
- *
- * Created on: USE THE INFORMATION FROM THE HEADER MPLAB X IDE GENERATES FOR YOU
+ * File Name: main.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
  */
 
 // FBS
@@ -84,17 +85,21 @@ int main(void)
     
     /* Let's set up our UART */    
     InitUART2();
-        
+    
+    Disp2String("\033[2J\033[H\r"); // clear terminal
+    
+    // Main loop
+    // Waits for button press and executes logic after 200ms
     while(1) 
     {
-        Idle();
-        delay_ms(200);  // Debouncing
+        Idle();             // Wait for interrupt
+        delay_ms(200);      // Debouncing
         if(CN_event == 1) 
         {
             CN_event = 0;
-            IOcheck();
+            IOcheck();      // Execute IO logic
             
-            _LATB9 = 0; // Turn off LED
+            _LATB9 = 0;     // Turn off LED
         }
     }
     
@@ -108,20 +113,18 @@ void __attribute__((interrupt, no_auto_psv)) _T2Interrupt(void)
     T2CONbits.TON = 0;
 }
 
+// CN interrupt subroutine
 void __attribute__((interrupt, no_auto_psv)) _CNInterrupt(void)
 {
     IFS1bits.CNIF = 0; // Clear CN interrupt flag
     char RA4_curr = PORTAbits.RA4;
-    // Do not trigger CN_event if no PBs are pressed
-    if(PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1){
-        //Disp2String("\033[2J\033[HNothing Pressed...\r");
-    }
-    // Detect Pause PB3 
-    else if(RA4_curr == 0 && RA4_prev == 1) {
-        pauseTimer();  // alternate paused flag
-    }else{
+    
+    // Only trigger CN_event if a PB is pressed
+    if(PORTBbits.RB7 == 0 || PORTBbits.RB4 == 0 || PORTAbits.RA4 == 0){
         CN_event = 1;
+    }//If PB3 is pressed
+    if(RA4_curr == 0 && RA4_prev == 1) {
+        paused = !paused;  //alternate paused flag
     }
-
     RA4_prev = RA4_curr; // update button state
 }
