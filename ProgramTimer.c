@@ -10,7 +10,6 @@
 
 uint16_t seconds = 0;
 uint16_t minutes = 0;
-
 uint8_t paused = 0;
 
 uint16_t getSeconds() {
@@ -57,49 +56,37 @@ void decrementMinutes(uint16_t m) {
     minutes -= m;
 }
 
-// Will run timer until seconds and minutes reach zero
-/*void startTimer() {
-    while (minutes > 0 || seconds > 0) {
-        if (paused){
-            delay_ms(100);   
-            continue; //If it's paused, wait here
-        } 
-        if (seconds == 0) {
-            minutes -= 1;
-            seconds = 59;
-        } else {
-            seconds -= 1;
-        }
-        _LATB9 ^= 1;    // Toggle LED1 every second
-        displayCNT();
-        /*for (int i=0; i<10; i++) {  // For about every tenth of a second
-                                    // check for IO
-            IOcheckRunning();
-            delay_ms(91);
-        }
-        delay_ms(1000);
-    }
-    _LATB9 = 0;
-}*/
-
 void startTimer() {
-    // TODO: add LED blinking
-    while (minutes > 0 || seconds > 0) {
-        if (paused){
-            delay_ms(50);   // wait while it's paused
-            continue; //If it's paused, wait here
-        } 
-        if (seconds == 0) {
-            minutes -= 1;
-            seconds = 59;
-        } else {
-            seconds -= 1;
-        }
+    // Variables to control intervals
+    const unsigned int INTERVAL_MS = 50;           // Short interval to check the flag
+    const unsigned int TICKS_PER_SECOND = 1000 / INTERVAL_MS; // 20 ticks per second
 
-        _LATB9 ^= 1;
-        displayCNT();
-        delay_ms(1000);
+    while (minutes > 0 || seconds > 0) {
+        int ticks = 0;
+        // Each "second" is divided into TICKS_PER_SECOND intervals
+        while (ticks < TICKS_PER_SECOND) {
+            if (paused) {
+                // If paused, wait for the interval and keep checking the flag
+                delay_ms(INTERVAL_MS);
+                continue;
+            }
+            delay_ms(INTERVAL_MS); // wait for the interval
+            ticks++;
+        }
+        // After a full second without being paused
+        if (!paused) {
+            if (seconds == 0) {
+                minutes--;
+                seconds = 59;
+            } else {
+                seconds--;
+            }
+            _LATB9 ^= 1; // Toggle LED and display time
+            displayCNT();
+        }
     }
+    // Turn off LED when countdown ends
+    _LATB9 = 0;
 }
 
 // pause timer at its current value
