@@ -50,12 +50,37 @@ void decrementMinutes(uint16_t m) {
 }
 
 void startTimer() {
-    // TODO: add LED blinking
+    //variables to track the button press
+    unsigned int press_time = 0;  // press time
+    const unsigned int long_press_ms = 3000; // 3 seconds
+    const unsigned int delay_interval = 50;  // time interval to verify 
+    
     while (minutes > 0 || seconds > 0) {
-        if (paused){
-            delay_ms(50);   
-            continue; //If it's paused, wait here
-        } 
+        // Check if pause button is pressed while paused
+        if (paused) {
+            if (PORTAbits.RA4 == 0) {
+                press_time = 0;
+                while (PORTAbits.RA4 == 0) {  // while still pressed
+                    delay_ms(delay_interval);
+                    press_time++;
+
+                    // If pressed ? 3 s
+                    if (press_time >= 60) {
+                        // Reset timer
+                        setSeconds(0);
+                        setMinutes(0);
+                        displayCNT();
+                        // Keep paused
+                        paused = 1;
+                        return;
+                    }
+                }
+            }
+
+            // If not pressed or released before 3 s, stay paused
+            delay_ms(50);
+            continue;
+        }
         delay_ms(1000);
         if (seconds == 0) {
             minutes -= 1;
@@ -63,7 +88,7 @@ void startTimer() {
         } else {
             seconds -= 1;
         }
-        
+        // LED 1 blinking each second
         _LATB9 ^= 1;
         displayCNT();
     }
@@ -71,7 +96,6 @@ void startTimer() {
 
 void pauseTimer() {
     paused = !paused;  // alternate pause state
-
 }
 
 void displaySET() {
@@ -83,9 +107,10 @@ void displaySET() {
 }
 
 void displayCNT() {
-    if(minutes == 0 && seconds == 0){
+    if(minutes == 0 && seconds == 0 && paused == 0){
         Disp2String("\033[2J\033[H");
         Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
+        _LATB9 = 1;
         return 0;
     }
     Disp2String("\033[2J\033[HCNT ");

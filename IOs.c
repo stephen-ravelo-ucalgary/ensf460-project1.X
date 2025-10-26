@@ -77,7 +77,7 @@ void IOcheck() {
                 //LED 2 blinking
                 _LATA6 ^= 1;
                 delay_ms(300);
-            }      
+            } 
         }
         count = 0;
         
