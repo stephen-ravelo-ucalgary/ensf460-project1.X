@@ -1,3 +1,11 @@
+/*
+ * File Name: IOs.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #include "IOs.h"
 
 uint16_t CLRF = 0;
@@ -28,8 +36,12 @@ void IOinit() {
 
 // Execute logic for peripheral IO
 void IOcheck() {   
-    uint16_t count = 0;
+    uint16_t count = 0; // used for inputs that include a short/long
+                        // press function
     
+    // PB1 pressed: increment seconds by 1 and display set message
+    // After incrementing 5 seconds and seconds value ends in 0 or 5
+    // start incrementing by 5 seconds.
     if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
             if (count >= 5 && getSeconds() % 5 == 0) {
@@ -43,19 +55,17 @@ void IOcheck() {
         }
         count = 0;
     }
+    // PB2 pressed: increment minutes by 1 and display set message
     else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
-            if (count >= 5 && getMinutes() % 5 == 0) {
-                incrementMinutes(5);
-            } else {
-                incrementMinutes(1);
-                count++;
-            }
+            incrementMinutes(1);
             displaySET();
             delay_ms(500);
         }
-        count = 0;
     }
+    // PB1 and PB2 pressed:
+    // Short press (< 3 seconds): start timer
+    // Long press (> 3 seconds): reset timer and display set message
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 1) {
             if (count == 60) {  // reset timer if PB1 and PB2 held for 500 ms
@@ -76,6 +86,7 @@ void IOcheck() {
         count = 0;
         
     }
+    // PB1 and PB3 pressed: decrement seconds by 1 and display set message
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
         while (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
             decrementSeconds(1);
@@ -83,6 +94,7 @@ void IOcheck() {
             delay_ms(500);
         }
     }
+    // PB2 and PB3 pressed: decrement minutes by 1 and display set message
     else if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
         while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
             decrementMinutes(1);
@@ -90,6 +102,7 @@ void IOcheck() {
             delay_ms(500);
         }
     }
+    // All PBs held down: display group info on terminal
     else if (PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
         uint16_t groupInfoDisplayed = 1;
         while(PORTBbits.RB7 == 0 && PORTBbits.RB4 == 0 && PORTAbits.RA4 == 0) {
@@ -102,8 +115,13 @@ void IOcheck() {
     }
 }
 
+// IO check for while the timer is running
 void IOcheckRunning() {
-    int count = 0;
+    uint16_t count = 0;
+    
+    // PB3 pressed: 
+    // Short press (< 3 seconds): pause timer
+    // Long press (> 3 seconds): reset timer and display clear message
     if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
         while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
             if (count == 60) {  // reset timer after PB3 is held for 3 seconds

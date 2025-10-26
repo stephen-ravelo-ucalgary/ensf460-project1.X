@@ -1,3 +1,11 @@
+/*
+ * File Name: clkChange.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #include "clkChange.h"
 
 // Sets clock frequency

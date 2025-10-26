@@ -1,3 +1,11 @@
+/*
+ * File Name: ProgramTimer.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #include "ProgramTimer.h"
 
 uint16_t seconds = 0;
@@ -49,6 +57,7 @@ void decrementMinutes(uint16_t m) {
     minutes -= m;
 }
 
+// Will run timer until seconds and minutes reach zero
 void startTimer() {
     while ((minutes > 0 || seconds > 0) && paused == 0) {
         if (seconds == 0) {
@@ -57,9 +66,10 @@ void startTimer() {
         } else {
             seconds -= 1;
         }
-        _LATB9 ^= 1;
+        _LATB9 ^= 1;    // Toggle LED1 every second
         displayCNT();
-        for (int i=0; i<10; i++) {
+        for (int i=0; i<10; i++) {  // For about every tenth of a second
+                                    // check for IO
             IOcheckRunning();
             delay_ms(91);
         }
@@ -67,6 +77,8 @@ void startTimer() {
     _LATB9 = 0;
 }
 
+// pause timer at its current value
+// resume after PB3 is pressed again
 void pauseTimer() {
     paused = 1;
     delay_ms(100);                  // avoid detecting the same press
@@ -85,6 +97,8 @@ void resetTimer() {
     minutes = 0;
 }
 
+// Displays finished message, turns LED1 on, and toggles LED2 every 300 ms
+// until a button is pressed
 void alarm() {
     displayFIN();
     _LATB9 = 1;
@@ -97,6 +111,7 @@ void alarm() {
     }
     _LATB9 = 0;
     _LATA6 = 0;
+    displaySET();
 }
 
 void displaySET() {

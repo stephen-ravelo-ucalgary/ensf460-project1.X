@@ -1,8 +1,9 @@
 /*
- * File:   UART2.c
- * Author: Rushi V
- *
- * Created on October 18, 2020, 9:32 PM
+ * File Name: UART2.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
  */
 
 

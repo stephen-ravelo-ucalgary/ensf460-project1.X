@@ -1,8 +1,9 @@
-/* 
- * File:   UART2.h
- * Author: rvyas
- *
- * Created on November 19, 2016, 9:22 PM
+/*
+ * File Name: UART2.h
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
  */
 
 #ifndef UART2_H

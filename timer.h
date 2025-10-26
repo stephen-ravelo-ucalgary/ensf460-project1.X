@@ -1,8 +1,9 @@
-/* 
- * File:   timer.h
- * Author: User1
- *
- * Created on October 7, 2025, 4:03 PM
+/*
+ * File Name: timer.h
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
  */
 
 #ifndef TIMER_H

@@ -1,8 +1,16 @@
+/*
+ * File Name: timer.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #include "timer.h"
 
 void timerInit() {
     // TMR2 config
-    T2CONbits.T32 = 0;      // operate timer 2 as 16 bit timer
+    T2CONbits.T32 = 0;
     T2CONbits.TCKPS = 3;    // set prescalar to 256
     T2CONbits.TCS = 0;
     T2CONbits.TGATE = 0;
