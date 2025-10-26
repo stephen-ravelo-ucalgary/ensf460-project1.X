@@ -1,9 +1,17 @@
+/*
+ * File Name: ProgramTimer.c
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #include "ProgramTimer.h"
 
 uint16_t seconds = 0;
 uint16_t minutes = 0;
 
-char paused = 0;      // pause flag
+uint8_t paused = 0;
 
 uint16_t getSeconds() {
     return seconds;
@@ -49,53 +57,61 @@ void decrementMinutes(uint16_t m) {
     minutes -= m;
 }
 
+// Will run timer until seconds and minutes reach zero
 void startTimer() {
-    //variables to track the button press
-    unsigned int press_time = 0;  // press time
-    const unsigned int long_press_ms = 3000; // 3 seconds
-    const unsigned int delay_interval = 50;  // time interval to verify 
-    
-    while (minutes > 0 || seconds > 0) {
-        // Check if pause button is pressed while paused
-        if (paused) {
-            if (PORTAbits.RA4 == 0) {
-                press_time = 0;
-                while (PORTAbits.RA4 == 0) {  // while still pressed
-                    delay_ms(delay_interval);
-                    press_time++;
-
-                    // If pressed ? 3 s
-                    if (press_time >= 60) {
-                        // Reset timer
-                        setSeconds(0);
-                        setMinutes(0);
-                        displayCNT();
-                        // Keep paused
-                        paused = 1;
-                        return;
-                    }
-                }
-            }
-
-            // If not pressed or released before 3 s, stay paused
-            delay_ms(50);
-            continue;
-        }
-        delay_ms(1000);
+    while ((minutes > 0 || seconds > 0) && paused == 0) {
         if (seconds == 0) {
             minutes -= 1;
             seconds = 59;
         } else {
             seconds -= 1;
         }
-        // LED 1 blinking each second
-        _LATB9 ^= 1;
+        _LATB9 ^= 1;    // Toggle LED1 every second
         displayCNT();
+        for (int i=0; i<10; i++) {  // For about every tenth of a second
+                                    // check for IO
+            IOcheckRunning();
+            delay_ms(91);
+        }
+    }
+    _LATB9 = 0;
+}
+
+// pause timer at its current value
+// resume after PB3 is pressed again
+void pauseTimer() {
+    paused = 1;
+    delay_ms(100);                  // avoid detecting the same press
+    while (1) {
+        Idle();
+        if (PORTAbits.RA4 == 0) {   // wait for next press
+            delay_ms(200);          // debouncing
+            paused = 0;
+            break;
+        }
     }
 }
 
-void pauseTimer() {
-    paused = !paused;  // alternate pause state
+void resetTimer() {
+    seconds = 0;
+    minutes = 0;
+}
+
+// Displays finished message, turns LED1 on, and toggles LED2 every 300 ms
+// until a button is pressed
+void alarm() {
+    displayFIN();
+    _LATB9 = 1;
+    
+    //  Show alarm until any button is pressed
+    while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 1) {
+        // LED 2 blinking
+        _LATA6 ^= 1;
+        delay_ms(250);
+    }
+    _LATB9 = 0;
+    _LATA6 = 0;
+    Disp2String("\033[2J\033[H\r");
 }
 
 void displaySET() {
@@ -107,13 +123,15 @@ void displaySET() {
 }
 
 void displayCNT() {
-    if(minutes == 0 && seconds == 0 && paused == 0){
-        Disp2String("\033[2J\033[H");
-        Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
-        _LATB9 = 1;
-        return 0;
-    }
     Disp2String("\033[2J\033[HCNT ");
+    Disp2Dec(minutes);
+    Disp2String("m : ");
+    Disp2Dec(seconds);
+    Disp2String("s\r");
+}
+
+void displayCLR() {
+    Disp2String("\033[2J\033[HCLR ");
     Disp2Dec(minutes);
     Disp2String("m : ");
     Disp2Dec(seconds);
@@ -125,3 +143,7 @@ void displayGroupInfo() {
     Disp2String("2025 ENSF 460 L02 - Group 01\r");
 }
 
+void displayFIN() {
+    Disp2String("\033[2J\033[H\r");
+    Disp2String("\033[2J\033[HFIN 00m : 00s - ALARM\r");
+}

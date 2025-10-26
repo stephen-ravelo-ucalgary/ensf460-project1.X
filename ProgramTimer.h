@@ -1,3 +1,11 @@
+/*
+ * File Name: ProgramTimer.h
+ * Assignment: Project 1
+ * Lab Section: B02
+ * Completed by: Stephen Ravelo, Aaron Lauang, Alexa Gonzalez
+ * Submission Date: October 26, 2025
+ */
+
 #ifndef PROGRAMTIMER_H
 #define	PROGRAMTIMER_H
 
@@ -18,11 +26,12 @@ void decrementMinutes(uint16_t minutes);
 void startTimer();
 void pauseTimer();
 void resetTimer();
+void alarm();
 
 void displaySET();
 void displayCNT();
 void displayFIN();
-
+void displayCLR();
 void displayGroupInfo();
 
 #endif
