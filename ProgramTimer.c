@@ -69,7 +69,9 @@ void startTimer() {
         _LATB9 ^= 1;    // Toggle LED1 every second
         displayCNT();
         delay_ms(910);
-        IOcheckRunning();
+        if (getPB3_event()) {
+            IOcheckRunning();
+        }
     }
     _LATB9 = 0;
 }

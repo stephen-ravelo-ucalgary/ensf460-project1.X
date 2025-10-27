@@ -12,6 +12,7 @@ uint16_t CLRF = 0;
 uint16_t PB3_event = 0;
 
 void getPB3_event() { return PB3_event; }
+void setPB3_event(uint16_t e) { PB3_event = 3; }
 
 // Initialize peripheral IO
 void IOinit() {
@@ -127,7 +128,6 @@ void IOcheckRunning() {
     // Short press (< 3 seconds): pause timer
     // Long press (> 3 seconds): reset timer and display clear message
     if (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
-        PB3_event = 1;
         while (PORTBbits.RB7 == 1 && PORTBbits.RB4 == 1 && PORTAbits.RA4 == 0) {
             if (count == 60) {  // reset timer after PB3 is held for 3 seconds
                                 // while timer is running

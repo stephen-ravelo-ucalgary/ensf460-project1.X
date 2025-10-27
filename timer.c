@@ -32,6 +32,7 @@ void delay_ms(uint16_t time_ms) {
         Idle();
         if (!getPB3_event() && PORTAbits.RA4 == 0) {
             skip = 1;
+            setPB3_event(1);
         }
     }
     
