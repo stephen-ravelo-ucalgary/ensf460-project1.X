@@ -68,11 +68,8 @@ void startTimer() {
         }
         _LATB9 ^= 1;    // Toggle LED1 every second
         displayCNT();
-        for (int i=0; i<10; i++) {  // For about every tenth of a second
-                                    // check for IO
-            IOcheckRunning();
-            delay_ms(91);
-        }
+        delay_ms(910);
+        IOcheckRunning();
     }
     _LATB9 = 0;
 }

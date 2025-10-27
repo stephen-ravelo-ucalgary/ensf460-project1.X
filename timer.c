@@ -27,8 +27,12 @@ void delay_ms(uint16_t time_ms) {
     T2CONbits.TON = 1;
     
     // idle until timer 2 interrupt
-    while (T2CONbits.TON == 1) {
+    uint16_t skip = 0;
+    while (T2CONbits.TON == 1 && !skip) {
         Idle();
+        if (!getPB3_event() && PORTAbits.RA4 == 0) {
+            skip = 1;
+        }
     }
     
     return;
